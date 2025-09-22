@@ -1,26 +1,26 @@
 {% set name = "opentelemetry-instrumentation-qdrant" %}
-{% set version = "0.47.3" %}
+{% set version = "0.47.2" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/opentelemetry_instrumentation_qdrant-{{ version }}.tar.gz
-  sha256: eecac4b021f457ea6365c062652fd235fcfd17c449d22813ef5c0ee44b90cb95
+  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name.replace('-', '_')}}-{{ version }}.tar.gz
+  sha256: 887eb7deb483c7184f4cf727755611ba029abd61c4356e8c2d87d83164c12846
 
 build:
-  noarch: python
-  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
   number: 0
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  skip: true  # [py<39]
 
 requirements:
   host:
-    - python {{ python_min }}
-    - poetry-core
     - pip
+    - python
+    - poetry-core
   run:
-    - python >={{ python_min }}
+    - python
     - opentelemetry-api >=1.28.0,<2.0.0
     - opentelemetry-instrumentation >=0.50b0
     - opentelemetry-semantic-conventions >=0.50b0
@@ -28,15 +28,12 @@ requirements:
   run_constrained:
     - qdrant-client >=1.9.1,<2.0.0
 
+# Unable to run tests and check imports, qdrant-client is not in the main channel.
 test:
-  imports:
-    - opentelemetry.instrumentation.qdrant
   commands:
     - pip check
   requires:
     - pip
-    - python {{ python_min }}
-    - qdrant-client
 
 about:
   home: https://www.traceloop.com/openllmetry
@@ -44,8 +41,13 @@ about:
   doc_url: https://www.traceloop.com/docs/openllmetry/introduction
   summary: OpenTelemetry Qdrant instrumentation
   license: Apache-2.0
+  license_family: Apache
   license_file: LICENSE
+  description: This library allows tracing client-side calls to Qdrant vector DB sent with the official Qdrant client library.
 
 extra:
   recipe-maintainers:
     - timkpaine
+  skip-lints:
+    - invalid_url
+    - missing_imports_or_run_test_py
