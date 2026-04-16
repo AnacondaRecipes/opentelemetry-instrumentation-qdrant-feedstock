@@ -26,12 +26,18 @@ requirements:
     - opentelemetry-semantic-conventions >=0.59b0
     - opentelemetry-semantic-conventions-ai >=0.5.1,<0.6.0
 
-# Unable to run tests and check imports, qdrant-client is not in the main channel.
 test:
+  source_files:
+    - tests
+  imports:
+    - opentelemetry.instrumentation.qdrant
   commands:
     - pip check
+    - pytest tests
   requires:
     - pip
+    - qdrant-client
+    - pytest
 
 about:
   home: https://www.traceloop.com/openllmetry
